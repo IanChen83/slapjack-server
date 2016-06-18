@@ -1,2 +1,2 @@
-var server = require('server.js');
-var 
+var server = require('./server.js');
+var recognizer = require('./recognizer.js');
