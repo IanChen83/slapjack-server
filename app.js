@@ -15,7 +15,6 @@ function serverHandler(req, res){
 
 ////////////// IPC client handler ////////////////
 function ipcHandler(data){
-
 }
 
 //////////////// SIGINT handler //////////////////

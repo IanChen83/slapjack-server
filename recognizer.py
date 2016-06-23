@@ -30,7 +30,10 @@ def set_stop():
     write(STOP)
 
 def set_ready():
+    # Notice that this function is blocing
     write(READY)
+    while read() != 2:
+        sleep(0.1)
 
 def set_rollback():
     write(ROLL_BACK)
