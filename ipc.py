@@ -5,13 +5,13 @@ import os
 server = None
 callback = None
 
-def clear_socket_path():
-    global socket_path
-    if os.path.exists(socket_path):
-        os.remove(socket_path)
+def clear_socket_path(path):
+    if os.path.exists(path):
+        os.remove(path)
 
 def start(path):
     global server
+    clear_socket_path(path)
     server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     server.bind(path)
 
@@ -44,12 +44,13 @@ def listen(stopFunc = n_time_generator(2)):
     data = None
     for isStop in stopFunc(data):
         if not isStop:
+            print("IPC server stop to listen")
             return
-        print("Listen for client")
+        print("IPC server listen for client")
         server.listen(1)
 
         conn, addr = server.accept()
-        print("Accept client")
+        print("IPC server accept client")
 
         while True:
             # This is a blocking read.
@@ -59,7 +60,7 @@ def listen(stopFunc = n_time_generator(2)):
 
             data = conn.recv(20)
             if not data:
-                print("Connection closed by client")
+                print("IPC server connection closed by client")
                 conn.close();
                 break
             if callback:

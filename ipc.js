@@ -11,6 +11,10 @@ function status(){
     return running;
 }
 
+function write(data){
+    ipc.of.pyserver.emit(data)
+}
+
 function start(callback){
     ipc.connectTo(
             'pyserver',
@@ -39,6 +43,6 @@ function start(callback){
 
 exports.status = status;
 exports.start = start;
-exports.write = ipc.of.pyserver.emit;
+exports.write = write;
 exports.appspace = ipc.config.appspace;
 exports.maxRetries = ipc.config.maxRetries;

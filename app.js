@@ -2,50 +2,112 @@ var server = require('./server.js');
 var spawn = require('child_process').spawn;
 var ipc = require('./ipc.js');
 
-var stdout = process.stdout.write;
+var LINK = "LINK";
+var SET_READY = "SET_READY";
+var SET_SIMPLE_DEAL = "SIMPLE_DEAL";
+var SET_DEAL = "DEAL";
+var SET_HIT = "HIT";
+var SET_FAKE_HIT = "FAKE_HIT";
+
+var CONN_FAILED = "CONN_FAILED";
+var RUN_SUCCESS = "RUN_SUCCESS";
+var ARDUINO_FAILED = "ARDUINO_FAILED";
+var UNKNOWN_COMMAND = "UNKNOWN_COMMAND";
+
+var resEnable = false;
+var gRes = null;
 
 //////////////// Configurations //////////////////
 PORT = 8080
 appspace = 'slapjack.';
 
+var pyserver = null;
+
 ////////////// Http server handler ///////////////
 function serverHandler(req, res){
-    ipc.write("simple_deal");
+    if(resEnable){
+        setTimeout(() => {
+            console.log("resEnable still true")
+            serverHandler(req, res);
+        }, 2000);
+    }else{
+        gRes = res;
+        resEnable = true;
+
+        var msg = req.url.substr(1);
+        if(msg == "" || msg == LINK){
+            ipc.write(LINK);
+        }else if(msg == SET_READY){
+            ipc.write(SET_READY);
+        }else if(msg == SET_SIMPLE_DEAL){
+            ipc.write(SET_SIMPLE_DEAL);
+        }else if(msg == SET_DEAL){
+            ipc.write(SET_DEAL);
+        }else{
+            console.write("HTTP server: Invaild request");
+            res.end(UNKNOWN_COMMAND);
+        }
+    }
 };
+////////// PyServer Permanent Runner /////////////
+function startPyServer(){
+    ///// Initial PyServer /////
+    pyserver = spawn('python', ['-u','app.py']);
+
+    pyserver.stdout.on('data', function(data){
+        process.stdout.write("PyServer: " + data);
+    });
+
+    pyserver.stderr.on('data', function(data){
+        process.stdout.write("PyServer Error: " + data);
+    });
+
+    pyserver.on('close', function(code){
+        console.log("Pyserver closed (or crashed...)");
+        setTimeout(() => {
+            console.log("Restart PyServer");
+            startPyServer();
+        }), 3000;
+    });
+
+}
 
 ////////////// IPC client handler ////////////////
 function ipcHandler(data){
+    if(resEnable){
+        if(data == RUN_SUCCESS){
+            gRes.end(RUN_SUCCESS);
+        }else if(data == ARDUINO_FAILED){
+            gRes.end(ARDUINO_FAILED);
+        }else if(data == CONN_FAILED){
+            gRes.end(CONN_FAILED);
+        }else if(!isNaN(parseInt(data))){
+            gRes.end(data);
+        }else{
+            gRes.end(UNKNOWN_COMMAND);
+        }
+        resEnable = false;
+    }else{
+        setTimeout(() => {
+            ipcHandler(data);
+        }, 2000);
+    }
 }
 
 //////////////// SIGINT handler //////////////////
 function exitHandler(){
-    console.log("\r");
-    if(server.status()){
-        server.close(process.exit);
+    if(server){
+        server.close();
     }
-    if(pyserver.connected){
+    if(pyserver){
         pyserver.kill();
     }
-    setTimeout(() => {
-        process.exit(2);
-    }, 2000);
 }
-process.on('SIGINT', exitHandler);
-
+process.on('exit', exitHandler);
 
 ///////////////// App workflow ///////////////////
-
-
-///// Initial PyServer /////
-var pyserver = spawn('python', ['-u','ipc.py']);
-
-pyserver.stdout.on('data', function(data){
-    stdout("PyServer: " + data);
-});
-
-pyserver.on('close', function(code){
-    console.log("Pyserver closed (or crashed...)");
-});
+///// Start PyServer
+//startPyServer();
 
 ///// Start IPC /////
 ipc.appspace = appspace;

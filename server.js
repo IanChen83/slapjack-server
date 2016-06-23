@@ -32,9 +32,11 @@ function start(handler, port){
 
 function close(callback){
     server.close(function(){
-        console.log("Closing server");
+        console.log("Closing TCP server");
         PORT = -1;
-        callback();
+        if(callback){
+            callback();
+        }
     });
 }
 

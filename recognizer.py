@@ -19,12 +19,20 @@ STOP      = 4
 READY     = 5
 ROLL_BACK = 6
 DEAL      = 7
+FAKE_HIT  = 8
+HIT       = 9
 
 def read():
     return bus.read_byte(addr)
 
 def write(byte):
     bus.write_byte(addr, byte)
+
+def fake_hit():
+    write(FAKE_HIT)
+
+def hit():
+    write(HIT)
 
 def set_stop():
     write(STOP)
@@ -58,18 +66,29 @@ def init_arduino():
 
     print("Initialize Arduino connection")
     count = 0
-    msg = read()
-    while msg != 1:
-        print ("Waiting...")
-        sleep(1)
-        count += 1
-        if count >= 5:
-            print("Arduino Connection Failed")
-            return -1
+    try:
         msg = read()
+    except Error:
+        print("Arduino connection failed")
+        return -1
+    if msg == 1:
+        print("Arduino linked")
+        set_ready()
+        return 0
+    elif msg == 2:
+        print("Arduino ready to deal")
+        return 0
+    else:
+        print("Adruino preparation failed")
+        return -2
 
-    print("Arduino linked")
-    return 0
+def test():
+    try:
+        msg = read()
+    except Error:
+        return False
+    return True
+
 
 def init():
     if(init_arduino() != 0):
@@ -90,10 +109,12 @@ def recognize(raw = rawCapture):
 
     return: number
     """
-    if rawCapture is None:
+    global rawCapture
+    print(rawCapture)
+    if raw is None:
         print("Recognizer: invoke init_recognizer() first")
         return -1
-    frame = rawCapture.array
+    frame = raw.array
     target_area = frame[:300,450:900]
 
     imgray = cv2.cvtColor(target_area,cv2.COLOR_BGR2GRAY)
