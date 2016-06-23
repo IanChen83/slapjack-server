@@ -81,12 +81,16 @@ def capture(frame = rawCapture):
     print("Camera: Capture a frame")
     camera.capture(frame, format='bgr')
 
-def recognize(frame = rawCapture.array):
+def recognize(raw = rawCapture):
     """
     frame: resolution (1280 x 720)
 
     return: number
     """
+    if rawCapture is None:
+        print("Recognizer: invoke init_recognizer() first")
+        return -1
+    frame = rawCapture.array
     target_area = frame[:300,450:900]
 
     imgray = cv2.cvtColor(target_area,cv2.COLOR_BGR2GRAY)
