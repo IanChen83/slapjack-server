@@ -26,6 +26,7 @@ def read():
     return bus.read_byte(addr)
 
 def write(byte):
+    print("Bus read: " + read())
     bus.write_byte(addr, byte)
 
 def fake_hit():
@@ -93,7 +94,7 @@ def init_arduino():
 def test():
     try:
         msg = read()
-    except Error:
+    except:
         return False
     return True
 
