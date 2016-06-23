@@ -38,8 +38,14 @@ function close(callback){
     });
 }
 
+function status(){
+    if(server == null) return false;
+    return server.listening;
+}
+
 exports.server = server;
 exports.start = start;
 exports.close = close;
+exports.status = status;
 exports.get_port = () => PORT;
 

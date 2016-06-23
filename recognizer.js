@@ -1,1 +1,0 @@
-var serial = require('serialport');
