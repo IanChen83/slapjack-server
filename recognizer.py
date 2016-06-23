@@ -55,10 +55,12 @@ def init_camera():
     camera.resolution = (1280, 720)
 
     rawCapture = PiRGBArray(camera)
+    print("Recognizer: Camera initialized")
 
 def init_recognizer(path = 'thresholds.pkl'):
     global thresholds
     thresholds = pickle.load(open(path, 'r'))
+    print("Recognizer: Recognizer initialized")
 
 def init_arduino():
     # Current behavior:
@@ -109,8 +111,6 @@ def recognize(raw = rawCapture):
 
     return: number
     """
-    global rawCapture
-    print(rawCapture)
     if raw is None:
         print("Recognizer: invoke init_recognizer() first")
         return -1

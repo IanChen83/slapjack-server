@@ -12,6 +12,7 @@ var SET_FAKE_HIT = "FAKE_HIT";
 var CONN_FAILED = "CONN_FAILED";
 var RUN_SUCCESS = "RUN_SUCCESS";
 var ARDUINO_FAILED = "ARDUINO_FAILED";
+var SERVER_BUSY = "SERVER_BUSY";
 var UNKNOWN_COMMAND = "UNKNOWN_COMMAND";
 
 var resEnable = false;
@@ -26,10 +27,8 @@ var pyserver = null;
 ////////////// Http server handler ///////////////
 function serverHandler(req, res){
     if(resEnable){
-        setTimeout(() => {
-            console.log("resEnable still true")
-            serverHandler(req, res);
-        }, 2000);
+        console.log("HTTP server: " + SERVER_BUSY);
+        res.end(SERVER_BUSY);
     }else{
         gRes = res;
         resEnable = true;
@@ -86,11 +85,10 @@ function ipcHandler(data){
         }else{
             gRes.end(UNKNOWN_COMMAND);
         }
+        gRes = null;
         resEnable = false;
     }else{
-        setTimeout(() => {
-            ipcHandler(data);
-        }, 2000);
+        gRes = null;
     }
 }
 

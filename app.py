@@ -29,18 +29,13 @@ import atexit
 atexit.register(exitHandler)
 
 ipc.start(socket_path)
-try:
-    recognizer.init_camera()
-    recognizer.init_recognizer()
-except Error as e:
-    print("Static error")
-    print(e)
-    exit(1)
+recognizer.init_camera()
+recognizer.init_recognizer()
 
 def ipcHandler(conn, data):
     global result, player
     if data == LINK:
-        r =recognizer.init_arduino()
+        r = recognizer.init_arduino()
         if r == -2:
             conn.send(ARDUINO_FAILED)
         elif r == -1:
@@ -56,13 +51,9 @@ def ipcHandler(conn, data):
 
     if data == SET_READY:
         recognizer.set_ready()
-
         conn.send(RUN_SUCCESS)
-
-        stime = time.time()
         recognizer.capture()
         result = recognizer.recognize()
-        etime = time.time()
         return
 
     if data == SET_SIMPLE_DEAL:
@@ -75,7 +66,6 @@ def ipcHandler(conn, data):
 
     if data == SET_DEAL:
         recognizer.set_deal()
-
         action = player.if_slap(result)
         if action == SET_HIT:
             recognizer.hit()
