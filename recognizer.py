@@ -41,6 +41,8 @@ def set_ready():
     # Notice that this function is blocing
     write(READY)
     while read() != 2:
+        if(read() == 1):
+            print("fuck")
         sleep(0.1)
 
 def set_rollback():
@@ -129,7 +131,7 @@ def recognize(raw = rawCapture):
     x,y,w,h = cv2.boundingRect(contours[1])
 
     #tocompare = test_th[y:y+h, x:x+w]
-    tocompare = cv2.resize(test_th[y:t+h, x:x+w],(400,250))
+    tocompare = cv2.resize(test_th[y:y+h, x:x+w],(400,250))
 
     diffs = [np.sum(tocompare-t) for t in thresholds]
 

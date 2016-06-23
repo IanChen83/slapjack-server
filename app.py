@@ -52,16 +52,16 @@ def ipcHandler(conn, data):
     if data == SET_READY:
         recognizer.set_ready()
         conn.send(RUN_SUCCESS)
-        recognizer.capture()
-        result = recognizer.recognize()
+        recognizer.capture(recognizer.rawCapture)
+        result = recognizer.recognize(recognizer.rawCapture)
         return
 
     if data == SET_SIMPLE_DEAL:
         recognizer.set_deal()
         recognizer.set_ready()
         conn.send(RUN_SUCCESS)
-        recognizer.capture()
-        result = recognizer.recognize()
+        recognizer.capture(recognizer.rawCapture)
+        result = recognizer.recognize(recognizer.rawCapture)
         return
 
     if data == SET_DEAL:
@@ -74,10 +74,10 @@ def ipcHandler(conn, data):
 
         player.increment()
 
-        conn.send(str(result))
         recognizer.set_ready()
-        recognizer.capture()
-        result = recognizer.recognize()
+        conn.send(str(result))
+        recognizer.capture(recognizer.rawCapture)
+        result = recognizer.recognize(recognizer.rawCapture)
         return
 
 ipc.callback = ipcHandler
