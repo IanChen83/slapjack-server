@@ -20,7 +20,7 @@ function start(callback){
                         function(){
                             console.log("IPC: Connect to PyServer");
                             running = true;
-                            ipc.of.pyserver.emit('hello');
+                            //ipc.of.pyserver.emit('hello');
                         });
 
                 ipc.of.pyserver.on('disconnect',
@@ -39,5 +39,6 @@ function start(callback){
 
 exports.status = status;
 exports.start = start;
+exports.write = ipc.of.pyserver.emit;
 exports.appspace = ipc.config.appspace;
 exports.maxRetries = ipc.config.maxRetries;

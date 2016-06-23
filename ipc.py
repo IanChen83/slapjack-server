@@ -2,7 +2,6 @@ import socket
 from time import sleep
 import os
 
-socket_path = "/tmp/slapjack.pyserver"
 server = None
 callback = None
 
@@ -11,12 +10,10 @@ def clear_socket_path():
     if os.path.exists(socket_path):
         os.remove(socket_path)
 
-def start(path = socket_path):
+def start(path):
     global server
     server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    server.bind(socket_path)
-
-    server.listen(1)
+    server.bind(path)
 
 def n_time_generator(n):
     def ret(data):
@@ -29,6 +26,9 @@ def n_time_generator(n):
     return ret
 
 one_time = n_time_generator(1)
+def inf_time(data):
+    while True:
+        yield True
 
 def listen(stopFunc = n_time_generator(2)):
     global server, callback

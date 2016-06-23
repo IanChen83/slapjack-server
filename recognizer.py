@@ -110,6 +110,8 @@ def recognize(raw = rawCapture):
     diffs = [np.sum(tocompare-t) for t in thresholds]
 
     ret = np.argmin(diffs) + 1
+    reset_frame(raw)
+    return ret
 
 def reset_frame(frame = rawCapture):
     frame.truncate(0)

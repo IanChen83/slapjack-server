@@ -10,12 +10,12 @@ appspace = 'slapjack.';
 
 ////////////// Http server handler ///////////////
 function serverHandler(req, res){
-    res.end("Response");
+    ipc.write("simple_deal");
 };
 
 ////////////// IPC client handler ////////////////
 function ipcHandler(data){
-    console.log(data.startsWith("he"));
+
 }
 
 //////////////// SIGINT handler //////////////////
@@ -58,5 +58,5 @@ setTimeout( () => {
 
 
 ///// Start server /////
-// server.start(serverHandler, PORT);
+server.start(serverHandler, PORT);
 
