@@ -39,6 +39,7 @@ def set_stop():
 
 def set_ready():
     # Notice that this function is blocing
+    print("SET_READY")
     write(READY)
     while read() != 2:
         if(read() == 1):
