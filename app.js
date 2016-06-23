@@ -1,7 +1,9 @@
 var server = require('./server.js');
 var spawn = require('child_process').spawn;
-
 var ipc = require('./ipc.js');
+
+var stdout = process.stdout.write;
+
 //////////////// Configurations //////////////////
 PORT = 8080
 appspace = 'slapjack.';
@@ -39,7 +41,7 @@ process.on('SIGINT', exitHandler);
 var pyserver = spawn('python', ['-u','ipc.py']);
 
 pyserver.stdout.on('data', function(data){
-    console.log("PyServer: " + data);
+    stdout("PyServer: " + data);
 });
 
 pyserver.on('close', function(code){
