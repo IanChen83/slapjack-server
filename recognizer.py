@@ -41,10 +41,13 @@ def set_ready():
     # Notice that this function is blocing
     print("SET_READY")
     write(READY)
+    count = 0
     while read() != 2:
-        if(read() == 1):
-            print("fuck")
+        count += 1
+        if count > 20:
+            break;
         sleep(0.1)
+    return read() == 2
 
 def set_rollback():
     write(ROLL_BACK)

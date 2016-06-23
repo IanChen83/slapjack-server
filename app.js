@@ -105,7 +105,7 @@ process.on('exit', exitHandler);
 
 ///////////////// App workflow ///////////////////
 ///// Start PyServer
-//startPyServer();
+startPyServer();
 
 ///// Start IPC /////
 ipc.appspace = appspace;

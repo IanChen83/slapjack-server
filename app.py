@@ -50,7 +50,9 @@ def ipcHandler(conn, data):
         return
 
     if data == SET_READY:
-        recognizer.set_ready()
+        if not recognizer.set_ready():
+            conn.send(CONN_FAILED)
+            return
         conn.send(RUN_SUCCESS)
         recognizer.capture(recognizer.rawCapture)
         result = recognizer.recognize(recognizer.rawCapture)
@@ -74,10 +76,10 @@ def ipcHandler(conn, data):
 
         player.increment()
 
-        recognizer.set_ready()
+        #recognizer.set_ready()
         conn.send(str(result))
-        recognizer.capture(recognizer.rawCapture)
-        result = recognizer.recognize(recognizer.rawCapture)
+        #recognizer.capture(recognizer.rawCapture)
+        #result = recognizer.recognize(recognizer.rawCapture)
         return
 
 ipc.callback = ipcHandler
