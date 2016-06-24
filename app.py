@@ -36,26 +36,19 @@ def ipcHandler(conn, data):
     global result, player
     if data == LINK:
         r = recognizer.init_arduino()
-        if r == -2:
-            conn.send(ARDUINO_FAILED)
-        elif r == -1:
+        if r == -1:
             conn.send(CONN_FAILED)
         else:
             conn.send(RUN_SUCCESS)
         return
 
-    if not recognizer.test():
-        print("Arduino connection Failed")
-        conn.send(CONN_FAILED)
-        return
-
     if data == SET_READY:
-        if not recognizer.set_ready():
-            conn.send(CONN_FAILED)
-            return
-        conn.send(RUN_SUCCESS)
-        recognizer.capture(recognizer.rawCapture)
-        result = recognizer.recognize(recognizer.rawCapture)
+        if recognizer.set_ready():
+            conn.send(RUN_SUCCESS)
+            recognizer.capture(recognizer.rawCapture)
+            result = recognizer.recognize(recognizer.rawCapture)
+        else:
+            conn.send(ARDUINO_FAILED)
         return
 
     if data == SET_SIMPLE_DEAL:

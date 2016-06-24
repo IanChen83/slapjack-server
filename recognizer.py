@@ -40,32 +40,28 @@ def set_stop():
 
 def set_ready():
     # Notice that this function is blocing
-    print("SET_READY")
-    msg = read()
-    if msg == 1:
-        write(READY)
-        count = 0
-        while read() != 2:
-            count += 1
-            if count > 20:
-                break;
-            sleep(1)
-        return read() == 2
-    elif msg == 2:
-        return True
+    write(READY)
+    count = 0
+    while read() == 3:
+        count += 1
+        if count > 8:
+            break;
+        sleep(1)
+    return read() != 3
 
 def set_rollback():
     write(ROLL_BACK)
 
 def set_deal():
     msg = read()
-    print("Message")
-    print(msg)
-    if msg == 2:
-        write(DEAL)
-    else:
-        set_ready()
-        write(DEAL)
+    count = 0
+    while msg == 3:
+        count += 1
+        if count > 8:
+            break;
+        sleep(1)
+        msg = read()
+    write(DEAL)
 
 def init_camera():
     global camera, rawCapture
@@ -91,16 +87,8 @@ def init_arduino():
     except Error:
         print("Arduino connection failed")
         return -1
-    if msg == 1:
-        print("Arduino linked")
-        set_ready()
-        return 0
-    elif msg == 2:
-        print("Arduino ready to deal")
-        return 0
-    else:
-        print("Adruino preparation failed")
-        return -2
+
+    return 0
 
 def test():
     try:
