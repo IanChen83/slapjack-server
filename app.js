@@ -19,7 +19,7 @@ var resEnable = false;
 var gRes = null;
 
 //////////////// Configurations //////////////////
-PORT = 8080
+PORT = 8000
 appspace = 'slapjack.';
 
 var pyserver = null;

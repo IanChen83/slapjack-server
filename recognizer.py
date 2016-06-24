@@ -23,7 +23,8 @@ FAKE_HIT  = 8
 HIT       = 9
 
 def read():
-    return bus.read_byte(addr)
+    response = bus.read_byte(addr)
+    return response
 
 def write(byte):
     bus.write_byte(addr, byte)
@@ -48,7 +49,7 @@ def set_ready():
             count += 1
             if count > 20:
                 break;
-            sleep(0.1)
+            sleep(1)
         return read() == 2
     elif msg == 2:
         return True
@@ -58,6 +59,8 @@ def set_rollback():
 
 def set_deal():
     msg = read()
+    print("Message")
+    print(msg)
     if msg == 2:
         write(DEAL)
     else:
