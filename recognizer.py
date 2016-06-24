@@ -26,7 +26,6 @@ def read():
     return bus.read_byte(addr)
 
 def write(byte):
-    print("Bus read: " + read())
     bus.write_byte(addr, byte)
 
 def fake_hit():
@@ -41,20 +40,29 @@ def set_stop():
 def set_ready():
     # Notice that this function is blocing
     print("SET_READY")
-    write(READY)
-    count = 0
-    while read() != 2:
-        count += 1
-        if count > 20:
-            break;
-        sleep(0.1)
-    return read() == 2
+    msg = read()
+    if msg == 1:
+        write(READY)
+        count = 0
+        while read() != 2:
+            count += 1
+            if count > 20:
+                break;
+            sleep(0.1)
+        return read() == 2
+    elif msg == 2:
+        return True
 
 def set_rollback():
     write(ROLL_BACK)
 
 def set_deal():
-    write(DEAL)
+    msg = read()
+    if msg == 2:
+        write(DEAL)
+    else:
+        set_ready()
+        write(DEAL)
 
 def init_camera():
     global camera, rawCapture

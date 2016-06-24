@@ -113,7 +113,7 @@ ipc.appspace = appspace;
 setTimeout( () => {
     // setTimeout is needed to avoid pyserver not started
     ipc.start(ipcHandler);
-}, 2000);
+}, 5000);
 
 
 ///// Start server /////
